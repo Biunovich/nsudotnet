@@ -32,10 +32,38 @@ double integral_simp(int n)
 		rezult += (funk(point1 + step*i) + 4 * funk(point2 + step*i) + funk(point3 + step*i))*step / 6;
 	return rezult;
 }
+double eps_integral_trap(double eps)
+{
+	int i=0;
+	double step = 1,rezult1 = 0, rezult2 = 1000;
+	while (fabs(rezult1 - rezult2) > eps)
+	{
+		i++;
+		rezult1 = integral_trap(step);
+		step *= 2;
+		rezult2 = integral_trap(step);
+	}
+	printf("ITERATION: %d\n", i);
+	return rezult2;
+}
+double eps_integral_simp(double eps)
+{
+	int i = 0;
+	double step = 1, rezult1 = 0, rezult2 = 1000;
+	while (fabs(rezult1 - rezult2) > eps)
+	{
+		i++;
+		rezult1 = integral_simp(step);
+		step *= 2;
+		rezult2 = integral_simp(step);
+	}
+	printf("ITERATION: %d\n", i);
+	return rezult2;
+}
 int main()
 {
 	int n[] = { 20, 50, 100 }, i;
-	double znach;
+	double znach,eps;
 	printf("FORMULA PRYAMOUG\n");
 	for (i = 0; i < 3; i++){
 		znach = integral_pryam(n[i]);
@@ -51,5 +79,13 @@ int main()
 		znach = integral_simp(n[i]);
 		printf("SETKA: %d  ANSWER: %lf\n", n[i], znach);
 	}
+	printf("ENTER EPS: ");
+	scanf("%lf", &eps);
+	printf("FORMULA TRAPETSYI\n");
+	znach = eps_integral_trap(eps);
+	printf("ANSWER: %lf\n", znach);
+	printf("FORMULA SIMPSONA\n");
+	znach = eps_integral_simp(eps);
+	printf("ANSWER: %lf\n", znach);
 	return 0;
 }
