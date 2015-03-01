@@ -79,13 +79,13 @@ int main()
 		znach = integral_simp(n[i]);
 		printf("SETKA: %d  ANSWER: %lf\n", n[i], znach);
 	}
-	printf("ENTER EPS: ");
+	printf("\nENTER EPS: ");
 	scanf("%lf", &eps);
 	printf("FORMULA TRAPETSYI\n");
 	znach = eps_integral_trap(eps);
-	printf("ANSWER: %lf\n", znach);
+	printf("ANSWER: %0.8lf\n", znach);
 	printf("FORMULA SIMPSONA\n");
 	znach = eps_integral_simp(eps);
-	printf("ANSWER: %lf\n", znach);
+	printf("ANSWER: %0.8lf\n", znach);
 	return 0;
 }
