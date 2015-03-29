@@ -102,6 +102,16 @@ double ** cheb_array(double b, double a, int n)
 		cheb[1][i] = exp(cheb[0][i]);
 	return cheb;
 }
+void vyvod(double **arr, int n,double **cheb)
+{
+	FILE *g;
+	g = fopen("output.txt", "w");
+	double step = 0.001, i = 0;
+	for (i = 0; i < 0.3; i += step)
+	{
+		fprintf(g, "%lf %lf %lf %lf\n",i,exp(i), lagr(arr, n, i), lagr(cheb,n,i));
+	}
+}
 int main()
 {
 	int uzl, uzl1;
@@ -113,13 +123,15 @@ int main()
 	write(arr, uzl);
 	write(arr1, uzl1);
 	write(cheb, uzl);
-	printf("ENTER POINT: ");
-	scanf("%lf", &toch);
-	znach = lagr(arr, uzl, toch);
-	znach1 = lagr(arr1, uzl1, toch);
-	znach2 = lagr(cheb, uzl, toch);
-	printf("\nANSWER:\n1: %lf\n2: %lf\nCHEB: %lf\n", znach, znach1, znach2);
-	//printf("DIFFERENCE 1 AND 2: %lf\n", fabs(znach - znach1));
-	printf("PRIBLIZHENIE: \n1: %lf\n2: %lf\nCHEB: %lf\n", pogresh(arr, uzl, toch), pogresh(arr1, uzl1, toch), pogresh(cheb, uzl, toch));
+	vyvod(arr, uzl, cheb);
+	system("cd C:\\Program Files\\gnuplot\\bin\\");
+	//printf("ENTER POINT: ");
+	//scanf("%lf", &toch);
+	//znach = lagr(arr, uzl, toch);
+	//znach1 = lagr(arr1, uzl1, toch);
+	//znach2 = lagr(cheb, uzl, toch);
+	//printf("\nANSWER:\n1: %lf\n2: %lf\nCHEB: %lf\n", znach, znach1, znach2);
+	////printf("DIFFERENCE 1 AND 2: %lf\n", fabs(znach - znach1));
+	//printf("PRIBLIZHENIE: \n1: %lf\n2: %lf\nCHEB: %lf\n", pogresh(arr, uzl, toch), pogresh(arr1, uzl1, toch), pogresh(cheb, uzl, toch));
 	return 0;
 }
