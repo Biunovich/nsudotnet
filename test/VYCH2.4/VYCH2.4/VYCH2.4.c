@@ -55,6 +55,10 @@ double defbisek(double x, double y, double eps)
 		{
 			if (fabs(funk((x + y) / 2)) < eps)
 				return (x + y) / 2;
+			else
+			{
+				return -9999;
+			}
 		}
 		else if (deffunk(x)*deffunk((x + y) / 2) < 0)
 		{
@@ -85,10 +89,14 @@ double newton(double x,double eps)
 }
 double paramnewton(double x, double eps)
 {
+	int i=0;
 	double x1;
 	x1 = x - 2 * (funk(x) / deffunk(x));
 	while (fabs(x1-x)>eps)
 	{
+		if (i > 1000)
+			return -9999;
+		i++;
 		x = x1;
 		x1 = x - 2 * (funk(x) / deffunk(x));
 	}
@@ -115,6 +123,9 @@ void main()
 		if (arr[i] == 1)
 			printf("NEWTON METHOD: %lf\n", newton(((-1 + step*i) + (-1 + step*(i + 1))) / 2, eps));
 	for (i = 0; i < N; i++)
-		if (arr[i] != 0)
-			printf("NEWTON WITH PARAMETRS: %lf\n", paramnewton(((-1 + step*i) + (-1 + step*(i + 1))) / 2, eps));
+		if (arr[i] != 0){
+			rez = paramnewton(((-1 + step*i) + (-1 + step*(i + 1))) / 2, eps);
+			if (rez != -9999)
+				printf("NEWTON WITH PARAMETRS: %lf\n", rez);
+		}
 }
