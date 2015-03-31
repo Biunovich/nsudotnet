@@ -72,6 +72,28 @@ double defbisek(double x, double y, double eps)
 		return -9999;
 	}
 }
+double newton(double x,double eps)
+{
+	double x1;
+	x1 = x - (funk(x) / deffunk(x));
+	while (fabs(x-x1)>eps)
+	{
+		x = x1;
+		x1 = x1 - (funk(x1) / deffunk(x1));
+	}
+	return x1;
+}
+double paramnewton(double x, double eps)
+{
+	double x1;
+	x1 = x - 2 * (funk(x) / deffunk(x));
+	while (fabs(x1-x)>eps)
+	{
+		x = x1;
+		x1 = x - 2 * (funk(x) / deffunk(x));
+	}
+	return x1;
+}
 void main()
 {
 	int i;
@@ -89,4 +111,10 @@ void main()
 			if (rez != -9999)
 				printf("DIFFERENTIAL METHOD BISEK: %lf\n", rez);
 		}
+	for (i = 0; i < N; i++)
+		if (arr[i] == 1)
+			printf("NEWTON METHOD: %lf\n", newton(((-1 + step*i) + (-1 + step*(i + 1))) / 2, eps));
+	for (i = 0; i < N; i++)
+		if (arr[i] != 0)
+			printf("NEWTON WITH PARAMETRS: %lf\n", paramnewton(((-1 + step*i) + (-1 + step*(i + 1))) / 2, eps));
 }
