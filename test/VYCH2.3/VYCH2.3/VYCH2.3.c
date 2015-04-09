@@ -62,10 +62,16 @@ double eps_integral_simp(double eps)
 }
 double integral_gauss()
 {
-	double step = 1;
-	double point1 = step / 2 - step*sqrt(3 / 5) / 2, point2 = step / 2, point3 = step / 2 + step*sqrt(3 / 5) / 2,rezult = 0;
-	rezult = (5 * funk(point1) + 8 * funk(point2) + 5 * funk(point3))*step / 18;
+	double point1 = 1.0 / 2 - sqrt(3/5) / 2, point2 = 1.0 / 2, point3 = 1.0 / 2 + sqrt(3 / 5) / 2,rezult = 0;
+	rezult = (5 * funk(point1) + 8 * funk(point2) + 5 * funk(point3))/ 18;
 	return rezult;
+}
+double integral_gauss_1()
+{
+	double point1 = 1.0 / 2 - (0.932469514) / 2, point2 = 1.0 / 2 - (0.661209386)/2, point3 = 1.0 / 2 - (0.238619186) / 2, point4 = 1.0 / 2 + (0.238619186) / 2, point5 = 1.0 / 2 + (0.661209386)/2, point6 = 1.0 / 2 + (0.932469514) / 2;
+	double rezult = 0;
+	rezult = (0.171324492)*funk(point1) + (0.360761573)*funk(point2) + (0.467913935)*funk(point3) + (0.467913935)*funk(point4) + (0.360761573)*funk(point5) + (0.171324492)*funk(point6);
+	return rezult/2;
 }
 int main()
 {
@@ -87,7 +93,7 @@ int main()
 		printf("SETKA: %d  ANSWER: %0.8lf\n", n[i], znach);
 	}
 	printf("FORMULA GAUSSA 3\n");
-	znach = integral_gauss();
+	znach = integral_gauss_1();
 	printf("ANSWER: %0.8lf\n", znach);
 	printf("\nENTER EPS: ");
 	scanf("%lf", &eps);
