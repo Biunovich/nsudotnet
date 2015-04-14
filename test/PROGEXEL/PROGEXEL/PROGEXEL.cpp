@@ -167,8 +167,11 @@ void main()
 			temp = 0;
 		}
 	int min = rezult[0];
-	for (int i = 1; i < 4; i++)
+	for (int i = 1; i < 4; i++){
 		if (min>rezult[i])
 			min = rezult[i];
+		delete[] l[i];
+	}
+	delete[] l;
 	fprintf(g,"Number of doors: %d", min + 1);
 }
