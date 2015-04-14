@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-class line
+class line    //Create class line where we will contain our lines
 {
 public:
 	double a,b,c;
-	line(double x1, double y1, double x2, double y2)
+	line(double x1, double y1, double x2, double y2) //Construct our lines like ax + by + c = 0
 	{
-		this->a = y2 - y1; this->b = x1 - x2; this->c = x1*(y1 - y2) + y1*(x2 - x1);
+		this->a = y2 - y1; this->b = x1 - x2; this->c = x1*(y1 - y2) + y1*(x2 - x1); 
 	}
 	void write()
 	{
 		printf("%lf ", a); printf("%lf ", b); printf("%lf ", c);
 		printf("\n");
 	}
-	bool koll(const line *d)
+	bool koll(const line *d) //Here check lines for kollinearnost
 	{
 		if (this->a*d->b - d->a*this->b == 0)
 			return true;
@@ -22,7 +22,7 @@ public:
 			return false;
 		}
 	}
-	void intersect(line *d,double *x, double *y)
+	void intersect(line *d,double *x, double *y) //Where lines intersect
 	{
 		if (!this->koll(d))
 		{
@@ -68,19 +68,19 @@ void TochToArr(int x1, int y1, double *ox, double *oy, double *xy, double *yx,in
 		oy[i] = y1;
 	if (x1 == 100)
 		xy[i] = y1;
-}
+}  
 void main()
 {
 	int n;
-	double x1, x2, y1, y2, t1, t2, *ox, *oy, *xy, *yx;
+	double x1, x2, y1, y2, t1, t2, *ox, *oy, *xy, *yx;// ox,oy,xy,yx special massives for points in koordinate square 
 	FILE *f,*g;
 	g = fopen("output.txt", "w");
 	f = fopen("input.txt", "r");
 	fscanf(f, "%d", &n);
-	ox = (double*)calloc(sizeof(double),n+1);
-	oy = (double*)calloc(sizeof(double),n+1);
-	xy = (double*)calloc(sizeof(double),n+1);
-	yx = (double*)calloc(sizeof(double),n+1);
+	ox = (double*)calloc(sizeof(double),n+2);
+	oy = (double*)calloc(sizeof(double),n+2);
+	xy = (double*)calloc(sizeof(double),n+2);
+	yx = (double*)calloc(sizeof(double),n+2);
 	line ** l =(line**)malloc(sizeof(line*)*n);
 	for (int i = 0; i < n; i++)
 	{
@@ -98,7 +98,7 @@ void main()
 	qsort(ox, 1, n); qsort(oy, 1, n); qsort(xy, 1, n); qsort(yx, 1, n);
 	double x, y;
 	int temp = 0, rezult[] = {n,n,n,n};
-	for (int i = 1; i < n + 2; i++)
+	for (int i = 1; i < n + 2; i++) //Here we search minimum intersects on ox
 		if (ox[i] != 0)
 		{
 			x = (ox[i - 1] + ox[i]) / 2;
@@ -115,7 +115,7 @@ void main()
 				rezult[0] = temp;
 			temp = 0;
 		}
-	for (int i = 1; i < n + 2; i++)
+	for (int i = 1; i < n + 2; i++) //Here we search minimum intersects on oy
 		if (oy[i] != 0)
 		{
 			y = (oy[i - 1] + oy[i]) / 2;
@@ -132,7 +132,7 @@ void main()
 				rezult[1] = temp;
 			temp = 0;
 		}
-	for (int i = 1; i < n + 2; i++)
+	for (int i = 1; i < n + 2; i++) //Here we search minimum intersects on xy
 		if (xy[i] != 0)
 		{
 			y = (xy[i - 1] + xy[i]) / 2;
@@ -149,7 +149,7 @@ void main()
 				rezult[2] = temp;
 			temp = 0;
 		}
-	for (int i = 1; i < n + 2; i++)
+	for (int i = 1; i < n + 2; i++) //Here we search minimum intersects on yx
 		if (yx[i] != 0)
 		{
 			x = (yx[i - 1] + yx[i]) / 2;
