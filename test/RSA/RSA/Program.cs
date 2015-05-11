@@ -22,16 +22,16 @@ namespace RSA
                 {
                     case "Encrypt":
                         File.WriteAllText("RSAKEY.xml",RSA.ToXmlString(true));
-                        string rsaKey = File.ReadAllText("RSAKEY.xml");
-                        RSA.FromXmlString(rsaKey);
                         RSAEncrypt(dataToEncrypt, RSA.ExportParameters(false), false);
                         break;
                     case "Decrypt":
-                        rsaKey = File.ReadAllText("RSAKEY.xml");
+                        string rsaKey = File.ReadAllText("RSAKEY.xml");
                         RSA.FromXmlString(rsaKey);
                         encryptedData = Convert.FromBase64String(File.ReadAllText("EncryptedData.txt"));
                         RSADecrypt(encryptedData, RSA.ExportParameters(true), false);
                         break;
+                    default :
+                        throw new ArgumentException();
                 }
             }
         }
