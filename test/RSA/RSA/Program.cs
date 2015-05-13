@@ -12,15 +12,14 @@ namespace RSA
     {
         static void Main(string[] argv)
         {
-
-            string str = File.ReadAllText("DataToEncrypt.txt",Encoding.GetEncoding(1251));
-            byte[] dataToEncrypt = Encoding.Unicode.GetBytes(str);
             byte[] encryptedData;
             using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
             {
                 switch (argv[0])
                 {
                     case "Encrypt":
+                        string str = File.ReadAllText("DataToEncrypt.txt",Encoding.GetEncoding(1251));
+                        byte[] dataToEncrypt = Encoding.Unicode.GetBytes(str);
                         File.WriteAllText("RSAKEY.xml",RSA.ToXmlString(true));
                         RSAEncrypt(dataToEncrypt, RSA.ExportParameters(false), false);
                         break;
