@@ -21,11 +21,19 @@ namespace GUI
         }
         public static string Encrypt_Text(byte[] DataToEncrypt)
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+            if (File.Exists("RSAKEY.xml"))
             {
-                string rsaKey = File.ReadAllText("RSAKEY.xml");
-                RSA.FromXmlString(rsaKey);
-                return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
+                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                {
+                    string rsaKey = File.ReadAllText("RSAKEY.xml");
+                    RSA.FromXmlString(rsaKey);
+                    return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Key not found.", "Error");
+                return null;
             }
         }
         private static string RSAEncrypt(byte[] dataToEncrypt, RSAParameters rSAParameters, bool p)
@@ -41,11 +49,19 @@ namespace GUI
 
         public static string Decrypt_Text(byte[] encryptedData)
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+            if (File.Exists("RSAKEY.xml"))
             {
-                string rsaKey = File.ReadAllText("RSAKEY.xml");
-                RSA.FromXmlString(rsaKey);
-                return RSADecrypt(encryptedData, RSA.ExportParameters(true), false);
+                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                {
+                    string rsaKey = File.ReadAllText("RSAKEY.xml");
+                    RSA.FromXmlString(rsaKey);
+                    return RSADecrypt(encryptedData, RSA.ExportParameters(true), false);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Key not found.", "Error");
+                return null;
             }
         }
         private static string RSADecrypt(byte[] encryptedData, RSAParameters rSAParameters, bool p)
@@ -60,13 +76,12 @@ namespace GUI
         }
         public static string EncryptWithPubKey(string pathPubKey,byte[] DataToEncrypt)
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                string PubKey = File.ReadAllText(pathPubKey);
-                RSA.FromXmlString(PubKey);
-                //MessageBox.Show(RSA.ToXmlString(false));
-                return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
-            }
+                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                {
+                    string PubKey = File.ReadAllText(pathPubKey);
+                    RSA.FromXmlString(PubKey);
+                    return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
+                }
         }
     }
 }

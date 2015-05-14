@@ -5,17 +5,21 @@
     <Grid>
         <TextBox x:Name="EncryptedData" HorizontalAlignment="Left" Height="83" Margin="329,30,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="EncryptedData_Box"/>
         <Button Content="Encrypt/Decrypt" HorizontalAlignment="Left" Margin="343,118,0,0" VerticalAlignment="Top" Width="117" Click="EncryptDecrypt_Button"/>
-        <TextBlock HorizontalAlignment="Left" Margin="352,12,0,298" TextWrapping="Wrap" Text="EncryptedData" VerticalAlignment="Center" Width="73"/>
+        <TextBlock HorizontalAlignment="Left" Margin="353,10,0,0" TextWrapping="Wrap" Text="EncryptedData" VerticalAlignment="Top" Width="73"/>
         <TextBlock HorizontalAlignment="Left" Margin="208,12,0,0" TextWrapping="Wrap" Text="DecryptedData" VerticalAlignment="Top" Height="13"/>
         <TextBox x:Name="DecryptedData" HorizontalAlignment="Left" Height="83" Margin="186,30,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="DecryptedData_Box"/>
         <TextBlock HorizontalAlignment="Left" Margin="58,10,0,0" TextWrapping="Wrap" Text="DataToEncrypt" VerticalAlignment="Top"/>
         <TextBox x:Name="DataToEncrypt" HorizontalAlignment="Left" Height="83" Margin="36,30,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="DataToEncrypt_Box"/>
-        <Button Content="Create both RSA keys" HorizontalAlignment="Left" Margin="343,143,0,0" VerticalAlignment="Top" Width="117" Click="CreateKey_Button"/>
-        <RadioButton Content="Encrypt" HorizontalAlignment="Left" Margin="449,30,0,0" VerticalAlignment="Top" Width="53" Checked="Encrypt"/>
-        <RadioButton Content="Decrypt" HorizontalAlignment="Left" Margin="449,48,0,0" VerticalAlignment="Top" Width="53" Checked="Encrypt"/>
+        <Button Content="Create key/keys" HorizontalAlignment="Left" Margin="343,143,0,0" VerticalAlignment="Top" Width="117" Click="CreateKey_Button"/>
+        <RadioButton Content="Encrypt" GroupName="Mode" HorizontalAlignment="Left" Margin="449,30,0,0" VerticalAlignment="Top" Width="53" Checked="Encrypt"/>
+        <RadioButton Content="Decrypt" GroupName="Mode" HorizontalAlignment="Left" Margin="449,48,0,0" VerticalAlignment="Top" Width="53" Checked="Encrypt"/>
         <TextBox x:Name="ImportPubKey" HorizontalAlignment="Left" Height="23" Margin="208,171,0,0" TextWrapping="Wrap" Text="Location" VerticalAlignment="Top" Width="120"/>
         <Button Content="Import Public Key" HorizontalAlignment="Left" Margin="343,171,0,0" VerticalAlignment="Top" Width="117" Height="23" Click="ImportPubKey_Button"/>
         <Button Content="Encrypt with Public Key" HorizontalAlignment="Left" Margin="208,199,0,0" VerticalAlignment="Top" Width="120" Click="EncryptWithPubKey_Button"/>
+        <TextBlock HorizontalAlignment="Left" Margin="67,132,0,0" TextWrapping="Wrap" Text="Algorithms" VerticalAlignment="Top" Width="53"/>
+        <RadioButton Content="AES" HorizontalAlignment="Left" Margin="36,152,0,0" VerticalAlignment="Top" Checked="Algorithm"/>
+        <RadioButton Content="RC2" HorizontalAlignment="Left" Margin="36,170,0,0" VerticalAlignment="Top" Checked="Algorithm"/>
+        <RadioButton Content="RSA" HorizontalAlignment="Left" Margin="36,188,0,0" VerticalAlignment="Top" Checked="Algorithm"/>
 
     </Grid>
 </Window>

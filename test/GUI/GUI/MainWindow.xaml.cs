@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace GUI
 {
@@ -22,6 +23,7 @@ namespace GUI
     {
         string RadioButtonText;
         string RSAPubKey;
+        string RadioButtonMode;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,18 +31,98 @@ namespace GUI
 
         private void EncryptDecrypt_Button(object sender, RoutedEventArgs e)
         {
-            if (RadioButtonText=="Encrypt")
+            switch (RadioButtonMode)
             {
-                EncryptedData.Text = RSACrypt.Encrypt_Text(Encoding.Unicode.GetBytes(DataToEncrypt.Text));
+                case "RSA":
+                    {
+                        RSA_Mode();
+                        break;
+                    }
+                case "AES":
+                    {
+                        AES_Mode();
+                        break;
+                    }
+                case "RC2":
+                    {
+                        RC2_Mode();
+                        break;
+                    }
+                default:
+                    {
+                        MessageBox.Show("You must choose algorithm.", "Error");
+                        break;
+                    }
             }
-            else if (RadioButtonText=="Decrypt")
+        }
+
+        private void RC2_Mode()
+        {
+            switch(RadioButtonText)
             {
-                DecryptedData.Text = RSACrypt.Decrypt_Text(Convert.FromBase64String(EncryptedData.Text));
+                case "Encrypt":
+                    {
+                        EncryptedData.Text = RC2Crypt.Encrypt_Data(DataToEncrypt.Text);
+                        break;
+                    }
+                case "Decrypt":
+                    {
+                        DecryptedData.Text = RC2Crypt.Decrypt_Data(EncryptedData.Text);
+                        break;
+                    }
+                default:
+                    {
+                        MessageBox.Show("You must choose mode", "Error");
+                        break;
+                    }
+            }
+        }
+
+        private void AES_Mode()
+        {
+            switch (RadioButtonText)
+            {
+                case "Encrypt":
+                    {
+                        EncryptedData.Text = AESCrypt.Encrypt_Data(DataToEncrypt.Text);
+                        break;
+                    }
+                case "Decrypt":
+                    {
+                        DecryptedData.Text = AESCrypt.Decrypt_Data(EncryptedData.Text);
+                        break;
+                    }
+                default:
+                    {
+                        MessageBox.Show("You must choose mode", "Error");
+                        break;
+                    }
             }
         }
         private void CreateKey_Button(object sender, RoutedEventArgs e)
         {
-            RSACrypt.Create_Key();
+            switch (RadioButtonMode) {
+                case "RSA":
+                    {
+                        RSACrypt.Create_Key();
+                        break;
+                    }
+                case "AES":
+                    {
+                        AESCrypt.Create_Keys();
+                        break;
+                    }
+                case "RC2":
+                    {
+                        RC2Crypt.Create_Key();
+                        break;
+                    }
+                default:
+                    {
+                        MessageBox.Show("You must choose algorithm.", "Error");
+                        break;
+                    }
+        }
         }
         private void Encrypt(object sender, RoutedEventArgs e)
         {
@@ -50,12 +132,24 @@ namespace GUI
 
         private void ImportPubKey_Button(object sender, RoutedEventArgs e)
         {
-            RSAPubKey = ImportPubKey.Text;
+            if (File.Exists(ImportPubKey.Text))
+            {
+                RSAPubKey = ImportPubKey.Text;
+            }
+            else
+            {
+                MessageBox.Show("Public key not found", "Error");
+            }
         }
 
         private void EncryptWithPubKey_Button(object sender, RoutedEventArgs e)
         {
-            EncryptedData.Text = RSACrypt.EncryptWithPubKey(RSAPubKey, Encoding.Unicode.GetBytes(DataToEncrypt.Text));
+            if (RadioButtonMode == "RSA")
+                EncryptedData.Text = RSACrypt.EncryptWithPubKey(RSAPubKey, Encoding.Unicode.GetBytes(DataToEncrypt.Text));
+            else
+            {
+                MessageBox.Show("You can use this type encryption only with RSA algorithm.", "Error");
+            }
         }
 
         private void DataToEncrypt_Box(object sender, TextChangedEventArgs e)
@@ -71,6 +165,33 @@ namespace GUI
         private void EncryptedData_Box(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void Algorithm(object sender, RoutedEventArgs e)
+        {
+            var button = sender as RadioButton;
+            RadioButtonMode = button.Content.ToString();
+        }
+        private void RSA_Mode()
+        {
+            switch (RadioButtonText)
+            {
+                case "Encrypt":
+                    {
+                        EncryptedData.Text = RSACrypt.Encrypt_Text(Encoding.Unicode.GetBytes(DataToEncrypt.Text));
+                        break;
+                    }
+                case "Decrypt":
+                    {
+                        DecryptedData.Text = RSACrypt.Decrypt_Text(Convert.FromBase64String(EncryptedData.Text));
+                        break;
+                    }
+                default:
+                    {
+                        MessageBox.Show("You must choose mode.", "Error");
+                        break;
+                    }
+            }
         }
     }
 }
