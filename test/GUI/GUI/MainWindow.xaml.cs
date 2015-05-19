@@ -24,6 +24,9 @@ namespace GUI
         string RadioButtonText;
         string RSAPubKey;
         string RadioButtonMode;
+        Crypto Crypt_class_AES = new AESCrypt();
+        Crypto Crypt_class_RSA = new RSACrypt();
+        Crypto Crypt_class_RC2 = new RC2Crypt();
         public MainWindow()
         {
             InitializeComponent();
@@ -35,17 +38,17 @@ namespace GUI
             {
                 case "RSA":
                     {
-                        RSA_Mode();
+                        Base_Mode(Crypt_class_RSA);
                         break;
                     }
                 case "AES":
                     {
-                        AES_Mode();
+                        Base_Mode(Crypt_class_AES);
                         break;
                     }
                 case "RC2":
                     {
-                        RC2_Mode();
+                        Base_Mode(Crypt_class_RC2);
                         break;
                     }
                 default:
@@ -56,40 +59,18 @@ namespace GUI
             }
         }
 
-        private void RC2_Mode()
-        {
-            switch(RadioButtonText)
-            {
-                case "Encrypt":
-                    {
-                        EncryptedData.Text = RC2Crypt.Encrypt_Data(DataToEncrypt.Text);
-                        break;
-                    }
-                case "Decrypt":
-                    {
-                        DecryptedData.Text = RC2Crypt.Decrypt_Data(EncryptedData.Text);
-                        break;
-                    }
-                default:
-                    {
-                        MessageBox.Show("You must choose mode", "Error");
-                        break;
-                    }
-            }
-        }
-
-        private void AES_Mode()
+        private void Base_Mode(Crypto Crypt_class)
         {
             switch (RadioButtonText)
             {
                 case "Encrypt":
                     {
-                        EncryptedData.Text = AESCrypt.Encrypt_Data(DataToEncrypt.Text);
+                        EncryptedData.Text = Crypt_class.Encrypt_Data(DataToEncrypt.Text);
                         break;
                     }
                 case "Decrypt":
                     {
-                        DecryptedData.Text = AESCrypt.Decrypt_Data(EncryptedData.Text);
+                        DecryptedData.Text = Crypt_class.Decrypt_Data(EncryptedData.Text);
                         break;
                     }
                 default:
@@ -104,17 +85,17 @@ namespace GUI
             switch (RadioButtonMode) {
                 case "RSA":
                     {
-                        RSACrypt.Create_Key();
+                        Create_Key(Crypt_class_RSA);
                         break;
                     }
                 case "AES":
                     {
-                        AESCrypt.Create_Keys();
+                        Create_Key(Crypt_class_AES);
                         break;
                     }
                 case "RC2":
                     {
-                        RC2Crypt.Create_Key();
+                        Create_Key(Crypt_class_RC2);
                         break;
                     }
                 default:
@@ -123,6 +104,11 @@ namespace GUI
                         break;
                     }
         }
+        }
+
+        private void Create_Key(Crypto Crypt_class)
+        {
+            Crypt_class.Create_Key();
         }
         private void Encrypt(object sender, RoutedEventArgs e)
         {
@@ -171,27 +157,6 @@ namespace GUI
         {
             var button = sender as RadioButton;
             RadioButtonMode = button.Content.ToString();
-        }
-        private void RSA_Mode()
-        {
-            switch (RadioButtonText)
-            {
-                case "Encrypt":
-                    {
-                        EncryptedData.Text = RSACrypt.Encrypt_Text(Encoding.Unicode.GetBytes(DataToEncrypt.Text));
-                        break;
-                    }
-                case "Decrypt":
-                    {
-                        DecryptedData.Text = RSACrypt.Decrypt_Text(Convert.FromBase64String(EncryptedData.Text));
-                        break;
-                    }
-                default:
-                    {
-                        MessageBox.Show("You must choose mode.", "Error");
-                        break;
-                    }
-            }
         }
     }
 }

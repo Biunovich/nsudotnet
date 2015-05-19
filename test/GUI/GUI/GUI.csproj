@@ -54,6 +54,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AESCrypt.cs" />
+    <Compile Include="Interface.cs" />
     <Compile Include="RC2Crypt.cs" />
     <Compile Include="RSACrypt.cs" />
     <Page Include="MainWindow.xaml">

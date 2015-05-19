@@ -9,72 +9,82 @@ using System.Windows;
 
 namespace GUI
 {
-    class AESCrypt
+    class AESCrypt : Crypto
     {
-        public static void Create_Keys()
+        private static object LockObj = new object();
+        public void Create_Key()
         {
-            using (AesCryptoServiceProvider AES = new AesCryptoServiceProvider())
-            {
-                File.WriteAllText("AESIV.xml", Convert.ToBase64String(AES.IV));
-                File.WriteAllText("AESKEY.xml", Convert.ToBase64String(AES.Key));
-            }
-        }
-
-        internal static string Encrypt_Data(string DataToEncrypt)
-        {
-            if (File.Exists("AESKEY.xml") && File.Exists("AESIV.xml"))
+            lock (LockObj)
             {
                 using (AesCryptoServiceProvider AES = new AesCryptoServiceProvider())
                 {
-                    AES.Key = Convert.FromBase64String(File.ReadAllText("AESKEY.xml"));
-                    AES.IV = Convert.FromBase64String(File.ReadAllText("AESIV.xml"));
-                    ICryptoTransform encryptor = AES.CreateEncryptor(AES.Key, AES.IV);
-                    using (MemoryStream msEncrypt = new MemoryStream())
-                    {
-                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                        {
-                            using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                            {
-                                swEncrypt.Write(DataToEncrypt);
-                            }
-                            return Convert.ToBase64String(msEncrypt.ToArray());
-                        }
-                    }
+                    File.WriteAllText("AESIV.txt", Convert.ToBase64String(AES.IV));
+                    File.WriteAllText("AESKEY.txt", Convert.ToBase64String(AES.Key));
                 }
             }
-            else
-            {
-                MessageBox.Show("You must create keys.", "Error");
-                return null;
-            }
         }
 
-        internal static string Decrypt_Data(string p)
+        public string Encrypt_Data(string DataToEncrypt)
         {
-            if (File.Exists("AESKEY.xml") && File.Exists("AESIV.xml"))
+            lock (LockObj)
             {
-                using (AesCryptoServiceProvider AES = new AesCryptoServiceProvider())
+                if (File.Exists("AESKEY.txt") && File.Exists("AESIV.txt"))
                 {
-                    byte[] EncryptedData = Convert.FromBase64String(p);
-                    AES.Key = Convert.FromBase64String(File.ReadAllText("AESKEY.xml"));
-                    AES.IV = Convert.FromBase64String(File.ReadAllText("AESIV.xml"));
-                    ICryptoTransform decryptor = AES.CreateDecryptor(AES.Key, AES.IV);
-                    using (MemoryStream msDecrypt = new MemoryStream(EncryptedData))
+                    using (AesCryptoServiceProvider AES = new AesCryptoServiceProvider())
                     {
-                        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt,decryptor,CryptoStreamMode.Read))
+                        AES.Key = Convert.FromBase64String(File.ReadAllText("AESKEY.txt"));
+                        AES.IV = Convert.FromBase64String(File.ReadAllText("AESIV.txt"));
+                        ICryptoTransform encryptor = AES.CreateEncryptor(AES.Key, AES.IV);
+                        using (MemoryStream msEncrypt = new MemoryStream())
                         {
-                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                            using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                             {
-                                return srDecrypt.ReadToEnd();
+                                using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                                {
+                                    swEncrypt.Write(DataToEncrypt);
+                                }
+                                return Convert.ToBase64String(msEncrypt.ToArray());
                             }
                         }
                     }
                 }
+                else
+                {
+                    MessageBox.Show("You must create keys.", "Error");
+                    return null;
+                }
             }
-            else
+        }
+
+        public string Decrypt_Data(string p)
+        {
+            lock (LockObj)
             {
-                MessageBox.Show("You must create keys.", "Error");
-                return null;
+                if (File.Exists("AESKEY.txt") && File.Exists("AESIV.txt"))
+                {
+                    using (AesCryptoServiceProvider AES = new AesCryptoServiceProvider())
+                    {
+                        byte[] EncryptedData = Convert.FromBase64String(p);
+                        AES.Key = Convert.FromBase64String(File.ReadAllText("AESKEY.txt"));
+                        AES.IV = Convert.FromBase64String(File.ReadAllText("AESIV.txt"));
+                        ICryptoTransform decryptor = AES.CreateDecryptor(AES.Key, AES.IV);
+                        using (MemoryStream msDecrypt = new MemoryStream(EncryptedData))
+                        {
+                            using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                            {
+                                using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                                {
+                                    return srDecrypt.ReadToEnd();
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You must create keys.", "Error");
+                    return null;
+                }
             }
         }
     }

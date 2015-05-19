@@ -9,77 +9,87 @@ using System.IO;
 
 namespace GUI
 {
-    class RC2Crypt
+    class RC2Crypt : Crypto
     {
-        public static void Create_Key()
+        private static object LockObj = new object();
+        public void Create_Key()
         {
-            using (RC2CryptoServiceProvider RC2 = new RC2CryptoServiceProvider())
-            {
-                File.WriteAllText("RC2KEY.xml", Convert.ToBase64String(RC2.Key));
-                File.WriteAllText("RC2IV.xml", Convert.ToBase64String(RC2.IV));
-            }
-        }
-        internal static string Encrypt_Data(string p)
-        {
-            if (File.Exists("RC2KEY.xml") && File.Exists("RC2IV.xml"))
+            lock (LockObj)
             {
                 using (RC2CryptoServiceProvider RC2 = new RC2CryptoServiceProvider())
                 {
-                    RC2.Key = Convert.FromBase64String(File.ReadAllText("RC2KEY.xml"));
-                    RC2.IV = Convert.FromBase64String(File.ReadAllText("RC2IV.xml"));
-                    byte[] DataToEncrypt = Encoding.Unicode.GetBytes(p);
-                    ICryptoTransform encryptor = RC2.CreateEncryptor(RC2.Key, RC2.IV);
-                    using (MemoryStream msEncrypt = new MemoryStream())
+                    File.WriteAllText("RC2KEY.txt", Convert.ToBase64String(RC2.Key));
+                    File.WriteAllText("RC2IV.txt", Convert.ToBase64String(RC2.IV));
+                }
+            }
+        }
+        public string Encrypt_Data(string p)
+        {
+            lock (LockObj)
+            {
+                if (File.Exists("RC2KEY.txt") && File.Exists("RC2IV.txt"))
+                {
+                    using (RC2CryptoServiceProvider RC2 = new RC2CryptoServiceProvider())
                     {
-                        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt,encryptor,CryptoStreamMode.Write))
+                        RC2.Key = Convert.FromBase64String(File.ReadAllText("RC2KEY.txt"));
+                        RC2.IV = Convert.FromBase64String(File.ReadAllText("RC2IV.txt"));
+                        byte[] DataToEncrypt = Encoding.Unicode.GetBytes(p);
+                        ICryptoTransform encryptor = RC2.CreateEncryptor(RC2.Key, RC2.IV);
+                        using (MemoryStream msEncrypt = new MemoryStream())
                         {
-                            csEncrypt.Write(DataToEncrypt, 0, DataToEncrypt.Length);
-                            csEncrypt.FlushFinalBlock();
-                            return Convert.ToBase64String(msEncrypt.ToArray());
+                            using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                            {
+                                csEncrypt.Write(DataToEncrypt, 0, DataToEncrypt.Length);
+                                csEncrypt.FlushFinalBlock();
+                                return Convert.ToBase64String(msEncrypt.ToArray());
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show("You must create keys", "Error");
-                return null;
+                else
+                {
+                    MessageBox.Show("You must create keys", "Error");
+                    return null;
+                }
             }
         }
 
-        internal static string Decrypt_Data(string p)
+        public string Decrypt_Data(string p)
         {
-            if (File.Exists("RC2KEY.xml") && File.Exists("RC2IV.xml"))
+            lock (LockObj)
             {
-                using (RC2CryptoServiceProvider RC2 = new RC2CryptoServiceProvider())
+                if (File.Exists("RC2KEY.txt") && File.Exists("RC2IV.txt"))
                 {
-                    RC2.Key = Convert.FromBase64String(File.ReadAllText("RC2KEY.xml"));
-                    RC2.IV = Convert.FromBase64String(File.ReadAllText("RC2IV.xml"));
-                    byte[] EncryptedData = Convert.FromBase64String(p);
-                    ICryptoTransform decryptor = RC2.CreateDecryptor(RC2.Key, RC2.IV);
-                    using (MemoryStream msDecrypt = new MemoryStream(EncryptedData))
+                    using (RC2CryptoServiceProvider RC2 = new RC2CryptoServiceProvider())
                     {
-                        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                        RC2.Key = Convert.FromBase64String(File.ReadAllText("RC2KEY.txt"));
+                        RC2.IV = Convert.FromBase64String(File.ReadAllText("RC2IV.txt"));
+                        byte[] EncryptedData = Convert.FromBase64String(p);
+                        ICryptoTransform decryptor = RC2.CreateDecryptor(RC2.Key, RC2.IV);
+                        using (MemoryStream msDecrypt = new MemoryStream(EncryptedData))
                         {
-                            StringBuilder roundtrip = new StringBuilder();
-                            int b = 0;
-                            do
+                            using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                             {
-                                b = csDecrypt.ReadByte();
-                                if (b != -1)
+                                StringBuilder roundtrip = new StringBuilder();
+                                int b = 0;
+                                do
                                 {
-                                    roundtrip.Append((char)b);
-                                }
-                            } while (b != -1);
-                            return Encoding.Unicode.GetString(Encoding.ASCII.GetBytes(roundtrip.ToString()));
+                                    b = csDecrypt.ReadByte();
+                                    if (b != -1)
+                                    {
+                                        roundtrip.Append((char)b);
+                                    }
+                                } while (b != -1);
+                                return Encoding.Unicode.GetString(Encoding.ASCII.GetBytes(roundtrip.ToString()));
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show("You must create keys", "Error");
-                return null;
+                else
+                {
+                    MessageBox.Show("You must create keys", "Error");
+                    return null;
+                }
             }
         }
     }

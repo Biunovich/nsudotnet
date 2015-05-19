@@ -9,31 +9,39 @@ using System.Windows;
 
 namespace GUI
 {
-    class RSACrypt
+    class RSACrypt : Crypto
     {
-        public static void Create_Key()
+        private static object LockObj = new object();
+        public void Create_Key()
         {
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                File.WriteAllText("RSAKEY.xml", RSA.ToXmlString(true));
-                File.WriteAllText("RSAPUBKEY.xml", RSA.ToXmlString(false));
-            }
-        }
-        public static string Encrypt_Text(byte[] DataToEncrypt)
-        {
-            if (File.Exists("RSAKEY.xml"))
+            lock (LockObj)
             {
                 using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
                 {
-                    string rsaKey = File.ReadAllText("RSAKEY.xml");
-                    RSA.FromXmlString(rsaKey);
-                    return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
+                    File.WriteAllText("RSAKEY.xml", RSA.ToXmlString(true));
+                    File.WriteAllText("RSAPUBKEY.xml", RSA.ToXmlString(false));
                 }
             }
-            else
+        }
+        public string Encrypt_Data(string Data)
+        {
+            lock (LockObj)
             {
-                MessageBox.Show("Key not found.", "Error");
-                return null;
+                if (File.Exists("RSAKEY.xml"))
+                {
+                    using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                    {
+                        byte[] DataToEncrypt = Encoding.Unicode.GetBytes(Data);
+                        string rsaKey = File.ReadAllText("RSAKEY.xml");
+                        RSA.FromXmlString(rsaKey);
+                        return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Key not found.", "Error");
+                    return null;
+                }
             }
         }
         private static string RSAEncrypt(byte[] dataToEncrypt, RSAParameters rSAParameters, bool p)
@@ -47,21 +55,25 @@ namespace GUI
             }
         }
 
-        public static string Decrypt_Text(byte[] encryptedData)
+        public string Decrypt_Data(string Data)
         {
-            if (File.Exists("RSAKEY.xml"))
+            lock (LockObj)
             {
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                if (File.Exists("RSAKEY.xml"))
                 {
-                    string rsaKey = File.ReadAllText("RSAKEY.xml");
-                    RSA.FromXmlString(rsaKey);
-                    return RSADecrypt(encryptedData, RSA.ExportParameters(true), false);
+                    using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
+                    {
+                        byte[] encryptedData = Convert.FromBase64String(Data);
+                        string rsaKey = File.ReadAllText("RSAKEY.xml");
+                        RSA.FromXmlString(rsaKey);
+                        return RSADecrypt(encryptedData, RSA.ExportParameters(true), false);
+                    }
                 }
-            }
-            else
-            {
-                MessageBox.Show("Key not found.", "Error");
-                return null;
+                else
+                {
+                    MessageBox.Show("Key not found.", "Error");
+                    return null;
+                }
             }
         }
         private static string RSADecrypt(byte[] encryptedData, RSAParameters rSAParameters, bool p)
@@ -74,14 +86,17 @@ namespace GUI
                 return Encoding.Unicode.GetString(decryptedData);
             }
         }
-        public static string EncryptWithPubKey(string pathPubKey,byte[] DataToEncrypt)
+        public static string EncryptWithPubKey(string pathPubKey, byte[] DataToEncrypt)
         {
+            lock (LockObj)
+            {
                 using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
                 {
                     string PubKey = File.ReadAllText(pathPubKey);
                     RSA.FromXmlString(PubKey);
                     return RSAEncrypt(DataToEncrypt, RSA.ExportParameters(false), false);
                 }
+            }
         }
     }
 }
